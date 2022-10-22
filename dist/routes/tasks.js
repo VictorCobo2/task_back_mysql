@@ -10,3 +10,5 @@ exports.tasks_route = express_1.default.Router();
 exports.tasks_route.get('/tasks/getAll', tasks_1.getTasks);
 exports.tasks_route.get('/tasks/search/:id', tasks_1.getTask);
 exports.tasks_route.post('/tasks/create', tasks_1.createTask);
+exports.tasks_route.put('/tasks/edit/:id', tasks_1.editTask);
+exports.tasks_route.delete('/tasks/delete/:id', tasks_1.deleteTask);

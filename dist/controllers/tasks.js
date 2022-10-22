@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTask = exports.getTask = exports.getTasks = void 0;
+exports.deleteTask = exports.editTask = exports.createTask = exports.getTask = exports.getTasks = void 0;
 const tasks_1 = require("../models/tasks");
 const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -27,7 +27,7 @@ const getTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const task = yield tasks_1.Tasks.findByPk(id);
         task
             ? res.json(task)
-            : res.status(404).json({ msg: `No existe la tarea con el id: ${id}` });
+            : res.status(404).json({ msg: `No existe una tarea con el id: ${id}` });
     }
     catch (error) {
         res.json({ msg: error });
@@ -37,13 +37,53 @@ exports.getTask = getTask;
 const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { body } = req;
-        console.log(body);
-        const task = new tasks_1.Tasks();
-        yield task.save();
+        const task = yield tasks_1.Tasks.create(body);
         res.json(task);
     }
     catch (error) {
-        res.json({ msg: error });
+        res.status(500).json({
+            msg: error,
+        });
     }
 });
 exports.createTask = createTask;
+const editTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { body } = req;
+    try {
+        const task = yield tasks_1.Tasks.findByPk(id);
+        if (!task) {
+            return res.status(404).json({
+                msg: "No existe una tarea con el id " + id,
+            });
+        }
+        yield task.update(body);
+        res.json(task);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: error,
+        });
+    }
+});
+exports.editTask = editTask;
+const deleteTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const task = yield tasks_1.Tasks.findByPk(id);
+        if (!task) {
+            return res.status(404).json({
+                msg: "No existe una tarea con el id " + id,
+            });
+        }
+        yield task.destroy();
+        res.json(task);
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: error,
+        });
+    }
+});
+exports.deleteTask = deleteTask;
